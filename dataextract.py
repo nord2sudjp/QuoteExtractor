@@ -1,3 +1,9 @@
+# Debug mode
+#  Comment out line 100 then debug mode.
+# Paramenter
+#  c_inputfile
+#  c_xpath
+
 import requests
 import csv
 import lxml.html
@@ -7,6 +13,7 @@ import pandas as pd
 from urllib import parse
 from urllib.parse import urlsplit
 import json
+from time import sleep
 
 c_inputfile = 'url_list.csv'
 
@@ -15,7 +22,6 @@ c_xpath = "//article/div/blockquote/p"
 
 
 # c_outputfile = 'output.json'
-c_outputheader = ["company_name", "company_url", "email"]
 
 def rtv_data(url):
     path = url.split('/')
@@ -43,7 +49,7 @@ def rtv_data(url):
       
       quote_x = {}
       quote_x["quote"] = quote[:i+1].strip()
-      quote_x["author"] = quote[i+1:].strip()
+      quote_x["author"] = quote[i+1:].replace("Click to tweet", "").strip()
       quotes.append(quote_x)
 
     return quotes
@@ -52,7 +58,11 @@ def findnameindex(quote):
   print("INFO: findnameindex(): param - ", quote)
   doti = quote.find(".")
   
-  end_i =  -1
+  if doti == -1 :
+    doti = quote.rfind("?", 0, -1)
+    return doti
+  
+  end_i = -1
   min_i = -1 * len(quote) -1
   
   while True:
@@ -83,10 +93,13 @@ def main():
     base_list = extractdata
     # base_list.append(extractdata)
     print("INFO: main(): ", cp, " - completed")
-    # break
-  c_outputfile = cp + '.json'
-  f = open(c_outputfile, 'w')
-  json.dump(base_list, f)
+
+    c_outputfile = cp + '.json'
+    f = open(c_outputfile, 'w')
+    json.dump(base_list, f)
+    
+    break
+    sleep(5)
 
 if __name__=='__main__':
   main()

@@ -27,7 +27,7 @@ def main():
   root = lxml.html.fromstring(response.content)
   root.make_links_absolute(response.url)
 
-  with open(c_outputfile, 'w', newline='') as csvf:
+  with open(c_outputfile, 'w', newline='', encoding="utf-8") as csvf:
     writer = csv.writer(csvf, lineterminator='\n')
     writer.writerow(["name", "url"])
     for a in root.cssselect(c_css):
